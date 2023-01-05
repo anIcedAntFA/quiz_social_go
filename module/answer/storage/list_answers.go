@@ -2,42 +2,46 @@ package answerstorage
 
 import (
 	"context"
+	"fmt"
 	"social_quiz/common"
 	answermodel "social_quiz/module/answer/model"
 )
 
 func (s *answerMySQLStorage) ListAnswers(
 	ctx context.Context,
-	filter *answermodel.Filter,
-	paging *common.Paging,
-	moreKeys ...string,
+	param common.PagingParams,
 ) ([]answermodel.Answer, error) {
 	db := s.db.Table(answermodel.Answer{}.TableName())
 
-	if f := filter; f != nil {
-		if len(f.Status) > 0 {
-			db = db.Where("status in (?)", f.Status)
-		}
-		if len(f.Content) > 0 {
-			db = db.Where("status in (?)", f.Content)
-		}
-		if len(f.Correct) > 0 {
-			db = db.Where("status in (?)", f.Correct)
-		}
-	}
+	if f := param.Search; f != "" {
+		//if len(f) > 0 {
+		//	db = db.Where("status LIKE ?", fmt.Sprintf("%%%v%%", f))
+		//}
 
-	if err := db.Count(&paging.Total).Error; err != nil {
-		return nil, common.ErrorDB(err)
-	}
+		str := fmt.Sprintf("%%%v%%", f)
 
-	offset := (paging.Page - 1) * paging.Limit
+		if len(f) > 0 {
+			db = db.Where("content LIKE ? OR status LIKE ?", str, str)
+		}
+		//if len(f) > 0 {
+		//	db = db.Where("correct in (?)", f)
+		//}
+	}
+	//searchin
+	//if err := db.Count(&paging.Total).Error; err != nil {
+	//	return nil, common.ErrorDB(err)
+	//}
+	//
+	offset := (param.PageIndex - 1) * param.PageSize
+
+	order := fmt.Sprintf("%v %v", param.SortBy, param.Order)
 
 	var result []answermodel.Answer
 
 	if err := db.
 		Offset(offset).
-		Limit(paging.Limit).
-		Order("id desc").
+		Limit(param.PageSize).
+		Order(order).
 		Find(&result).
 		Error; err != nil {
 		return nil, common.ErrorDB(err)

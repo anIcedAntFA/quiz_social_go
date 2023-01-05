@@ -6,13 +6,19 @@ import (
 )
 
 type successResponse struct {
-	Data   interface{} `json:"data"`
-	Paging interface{} `json:"paging,omitempty"`
-	Filter interface{} `json:"filter,omitempty"`
+	PagingParams `json:",inline"`
+	Data         interface{} `json:"data"`
+	Paging       interface{} `json:"paging,omitempty"`
+	Filter       interface{} `json:"filter,omitempty"`
+	//PagingParam  interface{} `json:"param,omitempty"`
 }
 
 func NewSuccessResponse(data, paging, filter interface{}) *successResponse {
 	return &successResponse{Data: data, Paging: paging, Filter: filter}
+}
+
+func NewSuccessResponse1(data interface{}) *successResponse {
+	return &successResponse{Data: data}
 }
 
 func SimpleSuccessResponse(data interface{}) *successResponse {

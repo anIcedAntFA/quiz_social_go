@@ -9,9 +9,7 @@ import (
 type ListAnswersStorage interface {
 	ListAnswers(
 		ctx context.Context,
-		filter *answermodel.Filter,
-		paging *common.Paging,
-		moreKeys ...string,
+		param common.PagingParams,
 	) ([]answermodel.Answer, error)
 }
 
@@ -25,10 +23,9 @@ func NewListAnswersBusiness(storage ListAnswersStorage) *listAnswersBusiness {
 
 func (biz *listAnswersBusiness) ListAnswers(
 	ctx context.Context,
-	filter *answermodel.Filter,
-	paging *common.Paging,
+	param common.PagingParams,
 ) ([]answermodel.Answer, error) {
-	result, err := biz.storage.ListAnswers(ctx, filter, paging)
+	result, err := biz.storage.ListAnswers(ctx, param)
 
 	if err != nil {
 		return nil, common.ErrorCannotListEntity(answermodel.EntityName, err)

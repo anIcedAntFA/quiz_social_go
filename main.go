@@ -6,6 +6,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"net/http"
 	"os"
 	"social_quiz/components/appctx"
 	"social_quiz/middleware"
@@ -45,5 +46,24 @@ func main() {
 
 	setupAdminRoute(appContext, v1)
 
+	router.GET("/qwerty", aQwerty)
+
 	router.Run()
+}
+
+type pagingParams struct {
+	PageIndex int    `json:"page_index" form:"page_index"`
+	PageSize  int    `json:"page_size" form:"page_size"`
+	Sort      string `json:"sort" form:"sort"`
+	Search    string `json:"search" form:"search"`
+}
+
+func aQwerty(c *gin.Context) {
+	var param pagingParams
+
+	if c.ShouldBindQuery(&param) == nil {
+		log.Println(param)
+	}
+
+	c.JSON(http.StatusOK, param)
 }

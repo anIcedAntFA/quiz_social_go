@@ -41,4 +41,6 @@ func setupMainRoute(appCtx appctx.AppContext, v1 *gin.RouterGroup) {
 	likedUsers.POST("", ginquestionlike.HandleUserLikeQuestion(appCtx))
 	likedUsers.DELETE("", ginquestionlike.HandleUserDislikeQuestion(appCtx))
 	likedUsers.GET("", ginquestionlike.HandleGetListUsersLikeQuestion(appCtx))
+
+	answers.GET("/qwerty")
 }
